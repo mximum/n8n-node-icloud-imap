@@ -1,0 +1,12 @@
+{
+  "name": "iCloud – ungelesene Mails lesen",
+  "nodes": [
+    { "parameters": {}, "id": "manual-start", "name": "Manuell starten", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [260, 300] },
+    { "parameters": { "operation": "getMany", "mailbox": "INBOX", "limit": 10, "filters": { "unreadOnly": true }, "options": { "downloadAttachments": false, "maxMessageSizeMB": 25 } }, "id": "read-mail", "name": "iCloud Mail", "type": "CUSTOM.iCloudMail", "typeVersion": 1, "position": [500, 300] }
+  ],
+  "connections": { "Manuell starten": { "main": [[{ "node": "iCloud Mail", "type": "main", "index": 0 }]] } },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "tags": []
+}

@@ -1,0 +1,16 @@
+{
+  "name": "iCloud – neue Testmail verschieben",
+  "nodes": [
+    { "parameters": { "mailbox": "INBOX", "options": { "includeExisting": false, "downloadAttachments": false, "catchUpInterval": 60 } }, "id": "icloud-trigger", "name": "Neue iCloud Mail", "type": "CUSTOM.iCloudMailTrigger", "typeVersion": 1, "position": [260, 300] },
+    { "parameters": { "conditions": { "options": { "caseSensitive": false, "leftValue": "", "typeValidation": "strict", "version": 2 }, "conditions": [{ "id": "subject-test", "leftValue": "={{ $json.subject }}", "rightValue": "[n8n-test]", "operator": { "type": "string", "operation": "contains" } }], "combinator": "and" }, "options": {} }, "id": "filter-subject", "name": "Nur Testmails", "type": "n8n-nodes-base.if", "typeVersion": 2.2, "position": [500, 300] },
+    { "parameters": { "operation": "move", "mailbox": "={{ $json.mailbox }}", "uid": "={{ $json.uid }}", "uidValidity": "={{ $json.uidValidity }}", "destinationMailbox": "", "options": {} }, "id": "move-mail", "name": "Zielordner wählen, dann aktivieren", "type": "CUSTOM.iCloudMail", "typeVersion": 1, "position": [760, 200], "disabled": true, "notesInFlow": true, "notes": "Credential und vorhandenen Zielordner wählen, dann diesen Node aktivieren." }
+  ],
+  "connections": {
+    "Neue iCloud Mail": { "main": [[{ "node": "Nur Testmails", "type": "main", "index": 0 }]] },
+    "Nur Testmails": { "main": [[{ "node": "Zielordner wählen, dann aktivieren", "type": "main", "index": 0 }], []] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "tags": []
+}

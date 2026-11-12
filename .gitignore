@@ -1,0 +1,14 @@
+node_modules/
+dist/
+artifacts/
+.pnpm-store/
+outputs/
+workflow-config/
+UPDATE-*.md
+.env
+.env.*
+!.env.example
+*.tgz
+*.log
+*.pem
+*.key

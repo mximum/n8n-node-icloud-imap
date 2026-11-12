@@ -1,0 +1,60 @@
+{
+  "name": "n8n-nodes-icloud-imap",
+  "version": "0.3.3",
+  "description": "Read, search and move iCloud Mail messages over IMAP, with an IDLE new-mail trigger for n8n.",
+  "license": "MIT",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "icloud",
+    "imap",
+    "email"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.json",
+    "dist/**/*.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-assets.mjs",
+    "test": "node --test test/*.test.cjs",
+    "build:custom": "tsc -p tsconfig.json && node scripts/copy-assets.mjs && node scripts/build-custom.mjs",
+    "check": "tsc -p tsconfig.json && node scripts/copy-assets.mjs && node --test test/*.test.cjs",
+    "prepack": "tsc -p tsconfig.json && node scripts/copy-assets.mjs",
+    "test:package": "node scripts/smoke-package.cjs"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/ICloudMailImap.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/ICloudMail/ICloudMail.node.js",
+      "dist/nodes/ICloudMail/ICloudMailTrigger.node.js"
+    ]
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.19.0",
+    "n8n-workflow": "2.16.0",
+    "typescript": "~5.9.3"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mximum/n8n-node-icloud-imap.git"
+  },
+  "homepage": "https://github.com/mximum/n8n-node-icloud-imap#readme",
+  "bugs": {
+    "url": "https://github.com/mximum/n8n-node-icloud-imap/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

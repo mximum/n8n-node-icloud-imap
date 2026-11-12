@@ -1,0 +1,93 @@
+name: Build and stage npm package
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      stage_release:
+        description: Stage the tested package for approval on npm
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install locked build dependencies
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          if [[ "$GITHUB_REF_TYPE" == tag && "$GITHUB_REF_NAME" != "v$version" ]]; then
+            echo "Release tag must match v$version"
+            exit 1
+          fi
+          npm install --global pnpm@11.25.0 --ignore-scripts
+          pnpm install --frozen-lockfile --ignore-scripts
+      - name: Build and test
+        run: |
+          pnpm run check
+          pnpm run test:package
+          pnpm run build:custom
+          version="$(node -p "require('./package.json').version")"
+          node scripts/verify-standalone.cjs "artifacts/custom-$version/icloud-imap"
+      - name: Pack and check npm payload
+        run: |
+          mkdir -p artifacts/npm
+          pnpm pack --pack-destination artifacts/npm
+          shopt -s nullglob
+          packages=(artifacts/npm/*.tgz)
+          [[ ${#packages[@]} == 1 ]]
+          unpacked="$(mktemp -d)"
+          tar -xzf "${packages[0]}" -C "$unpacked"
+          node scripts/smoke-package.cjs "$unpacked/package"
+          node scripts/check-package.mjs "$unpacked/package"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: n8n-community-package
+          path: artifacts/npm/*.tgz
+          if-no-files-found: error
+
+  stage:
+    if: >-
+      github.event_name == 'workflow_dispatch' && inputs.stage_release &&
+      github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: npm-publish
+    concurrency:
+      group: npm-stage
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: n8n-community-package
+          path: npm-release
+      - name: Stage tested package for npm approval
+        run: |
+          npm install --global npm@11.21.0 --ignore-scripts
+          shopt -s nullglob
+          packages=(npm-release/*.tgz)
+          [[ ${#packages[@]} == 1 ]]
+          npm stage publish "${packages[0]}" --access public --ignore-scripts

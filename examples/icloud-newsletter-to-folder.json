@@ -1,0 +1,16 @@
+{
+  "name": "iCloud – Newsletter anhand der Header verschieben",
+  "nodes": [
+    { "parameters": { "mailbox": "INBOX", "options": { "headersOnly": true, "includeExisting": false, "catchUpInterval": 60 } }, "id": "icloud-trigger", "name": "Neue iCloud Mail", "type": "CUSTOM.iCloudMailTrigger", "typeVersion": 1, "position": [260, 300] },
+    { "parameters": { "conditions": { "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 }, "conditions": [{ "id": "newsletter-header", "leftValue": "={{ ($json.headers?.['list-unsubscribe'] ?? []).some(value => value.trim().length > 0) || ($json.headers?.['list-id'] ?? []).some(value => value.trim().length > 0) }}", "operator": { "type": "boolean", "operation": "true", "singleValue": true } }], "combinator": "and" }, "options": {} }, "id": "filter-newsletter", "name": "Newsletter oder Mailingliste", "type": "n8n-nodes-base.if", "typeVersion": 2.2, "position": [510, 300] },
+    { "parameters": { "operation": "move", "mailbox": "={{ $json.mailbox }}", "uid": "={{ $json.uid }}", "uidValidity": "={{ $json.uidValidity }}", "destinationMailbox": "" }, "id": "move-mail", "name": "Newsletter-Ordner wählen, dann aktivieren", "type": "CUSTOM.iCloudMail", "typeVersion": 1, "position": [790, 200], "disabled": true, "notesInFlow": true, "notes": "Credential und vorhandenen Newsletter-Ordner wählen. Zuerst IF-Treffer prüfen, dann diesen Node aktivieren." }
+  ],
+  "connections": {
+    "Neue iCloud Mail": { "main": [[{ "node": "Newsletter oder Mailingliste", "type": "main", "index": 0 }]] },
+    "Newsletter oder Mailingliste": { "main": [[{ "node": "Newsletter-Ordner wählen, dann aktivieren", "type": "main", "index": 0 }], []] }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "tags": []
+}
