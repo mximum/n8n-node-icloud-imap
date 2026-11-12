@@ -83,7 +83,7 @@ async function until(check, timeout = 2000) {
 }
 
 test('production transport pins verified TLS and the Apple IMAP host', () => {
-  const client = originalCreateClient({ user: 'max', password: 'app-password' });
+  const client = originalCreateClient({ user: 'sample-user', password: 'app-password' });
   assert.equal(client.options.host, 'imap.mail.me.com');
   assert.equal(client.options.port, 993);
   assert.equal(client.options.secure, true);
@@ -173,9 +173,9 @@ test('IMAP reversed n:* responses do not replay old mail; batches sort and dedup
 });
 
 test('search supports unread/address/text/date filters and rejects invalid dates', () => {
-  const query = imap.buildSearch({ unreadOnly: true, from: 'max', subject: 'invoice', since: '2026-10-01' });
+  const query = imap.buildSearch({ unreadOnly: true, from: 'sample-user', subject: 'invoice', since: '2026-10-01' });
   assert.equal(query.seen, false); assert.equal(query.deleted, false);
-  assert.equal(query.from, 'max'); assert.equal(query.since.toISOString(), '2026-10-01T00:00:00.000Z');
+  assert.equal(query.from, 'sample-user'); assert.equal(query.since.toISOString(), '2026-10-01T00:00:00.000Z');
   assert.throws(() => imap.buildSearch({ since: 'broken' }), /Invalid/);
 });
 
