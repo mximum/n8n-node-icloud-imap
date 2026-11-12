@@ -53,14 +53,14 @@ test('a second activation of the same workflow/node emits a UID only once', asyn
   const first = context(), second = context();
   const r1 = await new ICloudMailTrigger().trigger.call(first); t.after(() => r1.closeFunction());
   const r2 = await new ICloudMailTrigger().trigger.call(second); t.after(() => r2.closeFunction());
-  clients[0].arrive(36623); clients[1].arrive(36623);
+  clients[0].arrive(103); clients[1].arrive(103);
   await until(() => first.emitted.length + second.emitted.length > 0); await delay(40);
   assert.equal(first.emitted.length + second.emitted.length, 1);
   assert.equal(first.emitted.length, 0);
   assert.equal(clients[0].usable, false);
   await r1.closeFunction(); // Cleanup of the old activation must not close its replacement.
-  clients[1].arrive(36624); await until(() => second.emitted.length === 2);
-  assert.deepEqual(second.emitted.map(item => item[0][0].json.uid), [36623, 36624]);
+  clients[1].arrive(104); await until(() => second.emitted.length === 2);
+  assert.deepEqual(second.emitted.map(item => item[0][0].json.uid), [103, 104]);
 });
 
 test('a superseded activation cannot return late and become a second listener', async (t) => {
@@ -125,8 +125,8 @@ test('a reconnect with stale UIDNEXT never re-emits an already emitted UID', asy
 });
 
 test('matching UIDVALIDITY keeps the high-water mark even when UIDNEXT regresses', () => {
-  const saved = { account:'a', mailbox:'INBOX', uidValidity:'1', lastUid:36623 };
-  for (const next of [36623,36620]) assert.equal(selectCursor(saved,'a','INBOX','1',next,false).cursor.lastUid,36623);
+  const saved = { account:'a', mailbox:'INBOX', uidValidity:'1', lastUid:103 };
+  for (const next of [103,100]) assert.equal(selectCursor(saved,'a','INBOX','1',next,false).cursor.lastUid,103);
   assert.equal(selectCursor({...saved,lastUid:4294967296},'a','INBOX','1',4,false).cursor.lastUid,3);
 });
 
