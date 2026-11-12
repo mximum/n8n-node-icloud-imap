@@ -17,7 +17,7 @@ async function inspect(directory, prefix = '') {
         /^dist\/(nodes|credentials|examples)\/.+\.(js|json|svg)$/.test(relative), `Unexpected file: ${relative}`);
       const text = await readFile(join(directory, entry.name), 'utf8');
       assert.ok(!/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(text), `Private key: ${relative}`);
-      assert.ok(!/[A-Z]:[\\/]Users[\\/]|\/root\/\.n8n\/n8n-data|sourceMappingURL=/.test(text), `Local path or source map: ${relative}`);
+      assert.ok(!/[A-Z]:[\\/]Users[\\/]|\/(?:root|home\/(?!node\/)[^/\s]+)\/|sourceMappingURL=/.test(text), `Local path or source map: ${relative}`);
       count++;
     }
   }
