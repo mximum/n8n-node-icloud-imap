@@ -15,6 +15,12 @@ flowchart LR
   D --> F[Vorhandener Zielordner]
 ```
 
+## Entwicklungsstand und Sicherheit
+
+Dieses Projekt wurde mit Unterstützung von **OpenAI Codex** entwickelt. Im Rahmen der Entwicklung wurde außerdem ein **Sicherheitsscan mit Codex** durchgeführt. Dieser Scan ist keine unabhängige Sicherheitszertifizierung und garantiert weder Fehlerfreiheit noch die Sicherheit späterer Änderungen.
+
+> **Experimentelles Projekt:** Nicht für geschäftskritische oder anderweitig wichtige produktive Workflows vorgesehen. Verwende den Node zunächst in einer Testumgebung mit unkritischen Mails. Fehler, doppelte Verarbeitung oder unerwartete Verschiebungen sind trotz Tests und Sicherheitsscan möglich.
+
 ## Was ist enthalten?
 
 | Node | Funktion | Typisches Beispiel |
@@ -215,6 +221,12 @@ Der Workflow **Build and stage npm package** baut und testet bei Pushes und Pull
 6. Die vorgemerkte Version bei npm prüfen und freigeben. Erst dann wird sie öffentlich installierbar.
 
 GitHub verwendet dafür OIDC mit kurzlebigen Anmeldedaten; ein dauerhaftes npm-Token ist nicht vorgesehen. Repository- und npm-Metadaten bleiben öffentlich. [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/)
+
+## Mitarbeit
+
+**Beiträge und Pull Requests sind herzlich willkommen!** Ob Fehlerbehebung, zusätzliche Tests, Verbesserungen an der Dokumentation oder neue Funktionen: Jede nachvollziehbare Verbesserung hilft.
+
+Bitte beschreibe in einem Issue oder Pull Request kurz das Problem, die vorgeschlagene Änderung und die durchgeführten Tests. Besprich größere Änderungen möglichst vorab in einem Issue. Verwende für Beispiele ausschließlich künstliche Maildaten und veröffentliche keine Zugangsdaten oder privaten Mailinhalte.
 
 ## Lizenz
 
